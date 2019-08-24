@@ -87,7 +87,7 @@
           return (
             <form onSubmit={ ev => ev.preventDefault()}>
               <input name='item' value={ item } onChange={ ev => this.setState({ item: ev.target.value })}/>
-              <button disabled={ !item }>Create Note</button>
+              <button disabled={ !item } onClick= { create }>Create Note</button>
             </form>
           )
         }
