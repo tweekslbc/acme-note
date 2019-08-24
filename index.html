@@ -57,8 +57,8 @@
       };
 
       const Notes = ({ notes }) =>{
-        console.log("notes are", notes)
-        const unArchived = notes.filter(note => (note.archive === false))
+        const unArchived = notes.filter(note => (note.archived === false))
+        console.log(unArchived);
         return(
           <div>
           <ul>
@@ -84,7 +84,6 @@
             `https://acme-users-api-rev.herokuapp.com/api/users/${user.id}/notes`
           )).data;
           this.setState({ notes, user });
-          console.log(notes);
         }
         render() {
           const { user, notes } = this.state;
@@ -93,7 +92,7 @@
               <Route render={ ()=> <Nav notes={ notes } /> } />
              <h2>Acme Note Taker for { user.fullName } </h2>
 
-                <Route path= '/notes/:status' render = { () => <Notes notes = {notes} /> } />
+                <Route path= '/notes/:archived' render = { () => <Notes notes = {notes} /> } />
 
             </HashRouter>
           );
