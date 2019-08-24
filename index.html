@@ -49,12 +49,26 @@
       const Nav = () => {
         return (
         <nav>
-          <NavLink>Notes</NavLink>
-          <NavLink>Archived</NavLink>
-          <NavLink>Create</NavLink>
+          <NavLink to='/notes/unarchived'>Notes</NavLink>
+          <NavLink to='/notes/archived'>Archived</NavLink>
+          <NavLink to='/notes/create'>Create</NavLink>
         </nav>
         );
       };
+
+      const Notes = ({ notes }) =>{
+        console.log("notes are", notes)
+        const unArchived = notes.filter(note => (note.archive === false))
+        return(
+          <div>
+          <ul>
+          {
+            unArchived.map( note => <li key={ note.id }>{ note.text }</li>)
+          }
+          </ul>
+          </div>
+        );
+        };
 
       class App extends React.Component {
         constructor() {
@@ -78,6 +92,9 @@
             <HashRouter>
               <Route render={ ()=> <Nav notes={ notes } /> } />
              <h2>Acme Note Taker for { user.fullName } </h2>
+
+                <Route path= '/notes/:status' render = { () => <Notes notes = {notes} /> } />
+
             </HashRouter>
           );
         }
