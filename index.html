@@ -68,6 +68,15 @@
         );
       };
 
+      const Create = () => {
+        return (
+          <form>
+            <input />
+              <button>Create Note</button>
+          </form>
+        )
+      }
+
       class App extends React.Component {
         constructor() {
           super();
@@ -89,11 +98,13 @@
             <HashRouter>
               <Route render={() => <Nav notes={notes} />} />
               <h2>Acme Note Taker for {user.fullName} </h2>
-
-              <Route
-                path="/notes/:archived"
-                render={() => <Notes notes={notes} />}
-              />
+              <Switch>
+                <Route path='/notes/create' component={ Create }/>
+                <Route
+                  path="/notes/:archived"
+                  render={() => <Notes notes={notes} />}
+                />
+              </Switch>
             </HashRouter>
           );
         }
