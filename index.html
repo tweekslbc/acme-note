@@ -68,13 +68,29 @@
         );
       };
 
-      const Create = () => {
-        return (
-          <form>
-            <input />
-              <button>Create Note</button>
-          </form>
-        )
+      class Create extends React.Component{
+        constructor(){
+          super();
+          this.state = {
+            item: ''
+          }
+          this.create = this.create.bind(this)
+        }
+
+        create(){
+          this.props.onCreate(this.state.item)
+        }
+
+        render() {
+          const { item } = this.state
+          const { create } = this
+          return (
+            <form onSubmit={ ev => ev.preventDefault()}>
+              <input name='item' value={ item } onChange={ ev => this.setState({ item: ev.target.value })}/>
+              <button disabled={ !item }>Create Note</button>
+            </form>
+          )
+        }
       }
 
       class App extends React.Component {
@@ -85,6 +101,11 @@
             user: {}
           };
         }
+
+        onCreate(item){
+          console.log('in App')
+        }
+
         async componentDidMount() {
           const user = await fetchUser();
           const notes = (await axios.get(
