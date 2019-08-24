@@ -12,55 +12,78 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.js"></script>
     <style>
+    nav {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .active {
+      background-color: dodgerblue;
+      color: white;
+    }
+
     </style>
   </head>
   <body>
-      <div id="root"></div>
-      <script type="text/babel">
-        const { HashRouter, Route, NavLink, Switch, Redirect } = ReactRouterDOM;
+    <div id="root"></div>
+    <script type="text/babel">
+      const { HashRouter, Route, NavLink, Switch, Redirect } = ReactRouterDOM;
 
-        class App extends React.Component{
-          constructor(){
-            super();
-            this.state = {
-              notes: [],
-              user: {}
-            };
+      const API = "https://acme-users-api-rev.herokuapp.com/api";
+      const fetchUser = async () => {
+        const storage = window.localStorage;
+        const userId = storage.getItem("userId");
+        if (userId) {
+          try {
+            return (await axios.get(`${API}/users/detail/${userId}`)).data;
+          } catch (ex) {
+            storage.removeItem("userId");
+            return fetchUser();
           }
-        async componentDidMount(){
-          const user= await fetchUser();
-          const notes = (await axios.get( `https://acme-users-api-rev.herokuapp.com/api/users/${user.id}/notes`)).data;
+        }
+        const user = (await axios.get(`${API}/users/random`)).data;
+        storage.setItem("userId", user.id);
+        return user;
+      };
+
+      const Nav = () => {
+        return (
+        <nav>
+          <NavLink>Notes</NavLink>
+          <NavLink>Archived</NavLink>
+          <NavLink>Create</NavLink>
+        </nav>
+        );
+      };
+
+      class App extends React.Component {
+        constructor() {
+          super();
+          this.state = {
+            notes: [],
+            user: {}
+          };
+        }
+        async componentDidMount() {
+          const user = await fetchUser();
+          const notes = (await axios.get(
+            `https://acme-users-api-rev.herokuapp.com/api/users/${user.id}/notes`
+          )).data;
           this.setState({ notes, user });
           console.log(notes);
         }
-          render(){
-            const { user, notes } = this.state;
-            return (
-             <h2>notes</h2>
-            )
-          }
-
-        }
-
-    const API = 'https://acme-users-api-rev.herokuapp.com/api';
-
-    const fetchUser = async ()=> {
-      const storage = window.localStorage;
-      const userId = storage.getItem('userId');
-      if(userId){
-        try {
-          return (await axios.get(`${API}/users/detail/${userId}`)).data;
-        }
-        catch(ex){
-          storage.removeItem('userId');
-          return fetchUser();
+        render() {
+          const { user, notes } = this.state;
+          return (
+            <HashRouter>
+              <Route render={ ()=> <Nav notes={ notes } /> } />
+             <h2>Acme Note Taker for { user.fullName } </h2>
+            </HashRouter>
+          );
         }
       }
-      const user = (await axios.get(`${API}/users/random`)).data;
-      storage.setItem('userId', user.id);
-      return  user;
-    };
-    ReactDOM.render(<App />, document.querySelector('#root'));
+
+      ReactDOM.render(<App />, document.querySelector("#root"));
     </script>
   </body>
 </html>
