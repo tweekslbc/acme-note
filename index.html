@@ -19,7 +19,7 @@
       <script type="text/babel">
         const { HashRouter, Route, NavLink, Switch, Redirect } = ReactRouterDOM;
 
-        class APP extends React.Component{
+        class App extends React.Component{
           constructor(){
             super();
             this.state = {
@@ -29,9 +29,16 @@
           }
         async componentDidMount(){
           const user= await fetchUser();
-          const notes = (await axios.get( `https://acme-users-api-rev.herokuapp.com/api/users/{ user.id }/notes`) )
+          const notes = (await axios.get( `https://acme-users-api-rev.herokuapp.com/api/users/${user.id}/notes`)).data;
+          this.setState({ notes, user });
+          console.log(notes);
         }
-
+          render(){
+            const { user, notes } = this.state;
+            return (
+             <h2>notes</h2>
+            )
+          }
 
         }
 
@@ -53,7 +60,7 @@
       storage.setItem('userId', user.id);
       return  user;
     };
-    render(<App />, root);
+    ReactDOM.render(<App />, document.querySelector('#root'));
     </script>
   </body>
 </html>
